@@ -11,6 +11,8 @@ data:
     retry_timeout: {{ .Values.patroni.retry_timeout }}
     maximum_lag_on_failover: {{ .Values.patroni.maxLagOnFailover }}
     synchronous_mode: {{ .Values.patroni.synchronous_mode }}
+    restapi:
+      listen: 0.0.0.0:{{ .Values.patroniPort }}
 
     bootstrap:
       dcs:
@@ -29,8 +31,6 @@ data:
         - auth-local: trust
         - encoding: UTF8
         
-    restapi:
-      listen: 0.0.0.0:{{ .Values.patroniPort }}
 
     postgresql:
       listen: 0.0.0.0:{{ .Values.postgresqlPort }}
@@ -55,10 +55,10 @@ data:
         {{- end }}
         wal_level: replica
         hot_standby: "on"
-        max_connections: 100
-        max_wal_senders: 5
-        max_replication_slots: 5
-        wal_keep_size: 64MB
+        max_connections: 200
+        max_wal_senders: 4
+        max_replication_slots: 4
+        wal_keep_size: 80MB
         archive_mode: "on"
         archive_command: 'cp %p {{ .Values.postgresql.data_mountpoint }}/pg_wal_archive/%f'
         log_destination: jsonlog
