@@ -1,8 +1,8 @@
 replicaCount: 3
 
 image:
-  repository: d2cio/patroni
-  tag: "latest"
+  repository: alishazaei/patroni
+  tag: "16.0"
   pullPolicy: IfNotPresent
 
 service:
@@ -11,7 +11,7 @@ service:
 
 persistence:
   enabled: true
-  storageClass: "manual"
+  storageClass: manual
   accessModes: ReadWriteOnce
   size: "8Gi"
   claimsize: "1Gi"
@@ -53,7 +53,9 @@ backup:
   schedule: "0 * * * *"
 
 patroniPort: 8008 
+postgresqlPort: 5432
 
 parameters:
   shared_buffers: "256MB"                  
   max_worker_processes: 8
+

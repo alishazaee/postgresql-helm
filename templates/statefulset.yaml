@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
+  serviceName: {{ include "postgresql.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -37,6 +38,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: PATRONI_KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           ports:
             - containerPort: {{ .Values.service.port }}
               name: postgres
@@ -67,6 +72,6 @@ spec:
         resources:
           requests:
             storage: {{ .Values.persistence.claimsize | quote }}
-        storageClassName: standard
+        storageClassName: os
         volumeMode: Filesystem
 

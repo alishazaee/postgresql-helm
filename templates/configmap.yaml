@@ -6,6 +6,7 @@ metadata:
     app: {{ include "postgresql.name" . }}
 data:
   patroni.yml: |
+    scope: postgresql
     ttl: {{ .Values.patroni.ttl }}
     loop_wait: {{ .Values.patroni.loop_wait }}
     retry_timeout: {{ .Values.patroni.retry_timeout }}
@@ -27,7 +28,6 @@ data:
         - locale-provider: icu
         - auth-host: md5
         - icu-locale: fa-IR
-        - data-checksums
         - auth-local: trust
         - encoding: UTF8
         
@@ -47,45 +47,15 @@ data:
           password: {{ .Values.replication.password }}
 
       parameters:
-        {{- if ne $.Values.backup.archiveMode "off" }}
-        archive_mode: {{ .Values.backup.archiveMode }}
-        archive_timeout: {{ .Values.backup.archiveTimeout }}
-        archive_command: 'PGDATABASE=postgres /bin/wal-g wal-push "$PGDATA/%p"'
-        restore_command: 'PGDATABASE=postgres /bin/wal-g wal-fetch "%f" "%p"'
-        {{- end }}
         wal_level: replica
         hot_standby: "on"
         max_connections: 200
         max_wal_senders: 4
         max_replication_slots: 4
         wal_keep_size: 80MB
-        archive_mode: "on"
-        archive_command: 'cp %p {{ .Values.postgresql.data_mountpoint }}/pg_wal_archive/%f'
-        log_destination: jsonlog
-        logging_collector: on
-        log_statement: all
-        log_rotation_age: 0
-        log_rotation_size: 0
-        log_directory: /var/log/postgresql
-        log_filename: log
-        {{- toYaml .Values.parameters | nindent 8 }}
 
     kubernetes:
+      bypass_api_service: true
       use_endpoints: true
       labels:
         app: {{ include "postgresql.fullname" . }}
-
-    log:
-      type: json
-      format:
-        - asctime: timestamp
-        - message
-        - levelname: level
-        - module
-        - filename: file
-        - lineno: line_number
-      dateformat: "%Y-%m-%d %H:%M:%S.%03d %z"
-      static_fields:
-        app: patroni
-
-
