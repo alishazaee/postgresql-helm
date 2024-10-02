@@ -2,12 +2,13 @@ replicaCount: 3
 
 image:
   repository: alishazaei/patroni
-  tag: "16.0"
+  tag: "14.0"
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
-  port: 1432
+  port: 5432
+  patroniPort: 8008
 
 persistence:
   enabled: true
@@ -15,6 +16,7 @@ persistence:
   accessModes: ReadWriteOnce
   size: "8Gi"
   claimsize: "1Gi"
+  storageclass: standard
 
 postgresql:
   username: postgres
@@ -51,9 +53,6 @@ backup:
   archiveMode: "on"                        
   archiveTimeout: 60                       
   schedule: "0 * * * *"
-
-patroniPort: 8008 
-postgresqlPort: 5432
 
 parameters:
   shared_buffers: "256MB"                  

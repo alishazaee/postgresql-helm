@@ -12,10 +12,10 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       name: postgres
-      targetPort: 5432
-    - port: 8008
+      targetPort: {{ .Values.service.port }}
+    - port: {{ .Values.service.patroniPort }}
       name: patroni-api
-      targetPort: 8008
+      targetPort: {{ .Values.service.patroniPort }}
   selector:
     app.kubernetes.io/name: {{ include "postgresql.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

@@ -33,12 +33,9 @@ data:
         
 
     postgresql:
-      listen: 0.0.0.0:{{ .Values.postgresqlPort }}
+      listen: 0.0.0.0:{{ .Values.service.port }}
       data_dir: {{ .Values.postgresql.data_mountpath }}
       authentication:
-        rewind:
-          username: {{ .Values.rewind.username }}
-          password: {{ .Values.rewind.password }}
         superuser:
           username: {{ .Values.admin.username }}
           password: {{ .Values.admin.password }}

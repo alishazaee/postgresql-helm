@@ -1,20 +1,19 @@
-FROM postgres:16
+FROM postgres:14.1
 
+# Install dependencies
+RUN apt-get update &&  apt install -y python3-pip \
+    && pip install patroni && pip install psycopg2-binary
 
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-dev \
-    && pip3 install patroni[etcd] \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+ENV PGPASSWORD=password
 
-
+# Create a directory for Patroni configuration
 RUN mkdir -p /etc/patroni
 
+# Copy the Patroni configuration template (modify as needed)
+COPY patroni.yaml /etc/patroni/patroni.yml
 
-COPY patroni.yml /etc/patroni/patroni.yml
+# Set the entrypoint to start Patroni
+ENTRYPOINT ["patroni", "/etc/patroni/patroni.yml"]
 
+# Expose PostgreSQL port
 EXPOSE 5432 8008
-
-CMD ["patroni", "/etc/patroni/patroni.yml"]

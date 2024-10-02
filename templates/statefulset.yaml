@@ -30,10 +30,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-            - name: PATRONI_KUBERNETES_BYPASS_API_SERVICE
-              value: 'true'
-            - name: PATRONI_KUBERNETES_USE_ENDPOINTS
-              value: 'true'
             - name: PATRONI_NAME
               valueFrom:
                 fieldRef:
@@ -45,7 +41,7 @@ spec:
           ports:
             - containerPort: {{ .Values.service.port }}
               name: postgres
-            - containerPort: 8008
+            - containerPort: {{ .Values.service.patroniPort }}
               name: patroni-api
           volumeMounts:
             - name: postgresql-data
@@ -72,6 +68,6 @@ spec:
         resources:
           requests:
             storage: {{ .Values.persistence.claimsize | quote }}
-        storageClassName: os
+        storageClassName: {{ .Values.persistence.storageclass  }}
         volumeMode: Filesystem
 
