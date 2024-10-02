@@ -2,7 +2,7 @@ replicaCount: 3
 
 image:
   repository: alishazaei/patroni
-  tag: "14.0"
+  tag: "16.1"
   pullPolicy: IfNotPresent
 
 service:
@@ -36,6 +36,7 @@ patroni:
   retry_timeout: 10            
   maximum_lag_on_failover: 1048576
   synchronous_mode: true
+
 
 admin:
   username: postgres                      

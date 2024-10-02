@@ -10,10 +10,11 @@ data:
     ttl: {{ .Values.patroni.ttl }}
     loop_wait: {{ .Values.patroni.loop_wait }}
     retry_timeout: {{ .Values.patroni.retry_timeout }}
-    maximum_lag_on_failover: {{ .Values.patroni.maxLagOnFailover }}
+    maximum_lag_on_failover: {{ .Values.patroni.maximum_lag_on_failover }}
     synchronous_mode: {{ .Values.patroni.synchronous_mode }}
     restapi:
-      listen: 0.0.0.0:{{ .Values.patroniPort }}
+      listen: 0.0.0.0:{{ .Values.service.patroniPort }}
+      connect_address: '${PATRONI_KUBERNETES_POD_IP}:{{ .Values.service.patroniPort }}'
 
     bootstrap:
       dcs:
@@ -23,7 +24,7 @@ data:
             - local all {{ .Values.admin.username }} trust
             - host all all 0.0.0.0/0 md5
             - host replication {{ .Values.replication.username }} 0.0.0.0/0 md5
-
+      
       initdb:
         - locale-provider: icu
         - auth-host: md5
@@ -34,6 +35,7 @@ data:
 
     postgresql:
       listen: 0.0.0.0:{{ .Values.service.port }}
+      connect_address: '${PATRONI_KUBERNETES_POD_IP}:5432'
       data_dir: {{ .Values.postgresql.data_mountpath }}
       authentication:
         superuser:
@@ -52,7 +54,6 @@ data:
         wal_keep_size: 80MB
 
     kubernetes:
-      bypass_api_service: true
       use_endpoints: true
       labels:
         app: {{ include "postgresql.fullname" . }}

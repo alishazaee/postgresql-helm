@@ -4,10 +4,13 @@ FROM postgres:14.1
 RUN apt-get update &&  apt install -y python3-pip \
     && pip install patroni && pip install psycopg2-binary
 
+RUN mkdir -p /etc/patroni && chown postgres. /etc/patroni
+
+USER postgres
+
 ENV PGPASSWORD=password
 
 # Create a directory for Patroni configuration
-RUN mkdir -p /etc/patroni
 
 # Copy the Patroni configuration template (modify as needed)
 COPY patroni.yaml /etc/patroni/patroni.yml
